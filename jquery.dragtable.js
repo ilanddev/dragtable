@@ -108,7 +108,7 @@
      */
     _restoreState: function(persistObj) {
       for (var n in persistObj) {
-        this.originalTable.startIndex = $('#' + n).closest('th').prevAll().size() + 1;
+        this.originalTable.startIndex = $('#' + n).closest('th').prevAll().length + 1;
         this.originalTable.endIndex = parseInt(persistObj[n], 10) + 1;
         this._bubbleCols();
       }
@@ -171,7 +171,7 @@
         _this.options.beforeReorganize(_this.originalTable, _this.sortableTable);
         // do reorganisation asynchronous
         // for chrome a little bit more than 1 ms because we want to force a rerender
-        _this.originalTable.endIndex = _this.sortableTable.movingRow.prevAll().size() + 1;
+        _this.originalTable.endIndex = _this.sortableTable.movingRow.prevAll().length + 1;
         setTimeout(_this._rearrangeTableBackroundProcessing(), 50);
       };
     },
@@ -221,21 +221,22 @@
         thtb = thtb.not('tfoot');
       }
       thtb.find('> tr > th').each(function(i, v) {
-        var w = $(this).outerWidth();
+        var w = $(this).is(':visible') ? $(this).outerWidth() : 0;
         widthArr.push(w);
         totalWidth += w;
       });
-      if(_this.options.exact) {
-          var difference = totalWidth - _this.originalTable.el.outerWidth();
-          widthArr[0] -= difference;
+      if (_this.options.exact) {
+        var difference = totalWidth - _this.originalTable.el.outerWidth();
+        widthArr[0] -= difference;
       }
       // one extra px on right and left side
       totalWidth += 2
 
-      var sortableHtml = '<ul class="dragtable-sortable" style="position:absolute; width:' + totalWidth + 'px;">';
+      var sortableHtml = '<ul class="dragtable-sortable" style="position:absolute; ' +
+        'left:' + _this.originalTable.el.offset().left + 'px; width:' + totalWidth + 'px;">';
       // assemble the needed html
       thtb.find('> tr > th').each(function(i, v) {
-        var width_li = $(this).outerWidth();
+        var width_li = $(this).is(':visible') ? $(this).outerWidth() : 0;
         sortableHtml += '<li style="width:' + width_li + 'px;">';
         sortableHtml += '<table ' + attrsString + '>';
         var row = thtb.find('> tr > th:nth-child(' + (i + 1) + ')');
@@ -279,7 +280,7 @@
       });
 
       // assign start index
-      this.originalTable.startIndex = $(e.target).closest('th').prevAll().size() + 1;
+      this.originalTable.startIndex = $(e.target).closest('th').prevAll().length + 1;
 
       this.options.beforeMoving(this.originalTable, this.sortableTable);
       // Start moving by delegating the original event to the new sortable table
@@ -300,7 +301,7 @@
 
       // Some inner divs to deliver the posibillity to style the placeholder more sophisticated
       var placeholder = this.sortableTable.el.find('.ui-sortable-placeholder');
-      if(!placeholder.height()  <= 0) {
+      if (!placeholder.height() <= 0) {
         placeholder.css('height', this.sortableTable.el.find('.ui-sortable-helper').height());
       }
 
@@ -322,7 +323,7 @@
         this.bindTo = this.bindTo.filter(this.options.dragaccept);
       }
       // bind draggable to handle if exists
-      if (this.bindTo.find(this.options.dragHandle).size() > 0) {
+      if (this.bindTo.find(this.options.dragHandle).length > 0) {
         this.bindTo = this.bindTo.find(this.options.dragHandle);
       }
       // restore state if necessary
@@ -332,7 +333,7 @@
       var _this = this;
       this.bindTo.mousedown(function(evt) {
         // listen only to left mouse click
-        if(evt.which!==1) return;
+        if (evt.which !== 1) return;
         if (_this.options.beforeStart(_this.originalTable) === false) {
           return;
         }
@@ -346,7 +347,7 @@
         clearTimeout(this.downTimer);
       });
     },
-    redraw: function(){
+    redraw: function() {
       this.destroy();
       this._create();
     },
