@@ -162,7 +162,7 @@
         sortableHtml += '<table ' + attrsString + '>';
         var row = thtb.find('> tr > th:nth-child(' + (i + 1) + ')');
         if (_this.options.maxMovingRows > 1) {
-          row = row.add(thtb.find('> tr').find('td:nth-child(' + (i + 1) + ')').slice(0, _this.options.maxMovingRows - 1));
+          row = row.add(thtb.find('tr > td:nth-child(' + (i + 1) + ')').slice(0, _this.options.maxMovingRows - 1));
         }
         row.each(function(j) {
           // TODO: May cause duplicate style-Attribute
